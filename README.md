@@ -67,7 +67,7 @@ project-management/
 
 ⚙️ Installation
 1️⃣ Clone the repository
-git clone https://github.com/yourusername/project-management.git
+git clone https://github.com/Dhiru9262/project-management.git
 cd project-management
 
 2️⃣ Setup Backend
