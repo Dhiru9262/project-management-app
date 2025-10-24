@@ -1,12 +1,18 @@
-function StudentDashboard({ user }) {
+import React, { useState } from "react";
+import CreateProject from "../../components/CreateProject";
+import MyProjects from "../../components/MyProjects";
+
+export default function StudentDashboard({ user }) {
   return (
-    <div className="bg-white shadow-md rounded-2xl p-6">
-      <h2 className="text-xl font-semibold mb-4">📚 Student Dashboard</h2>
-      <p>Email: {user.email}</p>
-      <p>
-        Here you can view assignments, submit projects, and track your progress.
-      </p>
-    </div>
+    <>
+      <div>
+        <div>
+          <MyProjects email={user.email} />
+        </div>
+        <div className="min-h-screen">
+          <CreateProject />
+        </div>
+      </div>
+    </>
   );
 }
-export default StudentDashboard;

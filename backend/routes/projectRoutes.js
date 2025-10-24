@@ -3,16 +3,14 @@ const {
   createProject,
   respondToProject,
   mentorApproval,
-  getMyProjects,
-  getPendingProjectsForMentor,
+  myProjects,
+  getProjectsByInstructor,
 } = require("../controllers/projectController");
 
 const router = express.Router();
 
 router.post("/", createProject); // student creates
-router.post("/:id/response", respondToProject); // team member accept/reject
-router.post("/:id/mentor-approval", mentorApproval); // mentor final approval
-router.get("/my-projects", getMyProjects); // get projects for student/team member
-router.get("/mentor/pending", getPendingProjectsForMentor); // get all pending mentor approvals
+router.get("/my-projects", myProjects); // student creates
+router.get("/teacher-projects", getProjectsByInstructor);
 
 module.exports = router;

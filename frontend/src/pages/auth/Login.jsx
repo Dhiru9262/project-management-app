@@ -7,10 +7,16 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-xl rounded-2xl p-10 w-full max-w-sm text-center">
+    <div
+      className="flex items-center justify-center min-h-screen"
+      style={{ backgroundColor: "#B2D3C2" }}
+    >
+      <div
+        className="shadow-xl rounded-2xl p-10 w-full max-w-sm text-center"
+        style={{ backgroundColor: "#f8f2ed" }}
+      >
         <h2 className="text-2xl font-bold mb-6 text-gray-800">
-          Welcome to project management App👋
+          Project-management-app 📝
         </h2>
         <p className="text-gray-500 mb-8">
           Login with Google as Student or Teacher

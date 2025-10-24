@@ -41,11 +41,12 @@ function Dashboard() {
     return <p className="text-center mt-10">No user found</p>;
   }
 
+  console.log(user);
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-2xl font-bold mb-6">
+    <div style={{ backgroundColor: "#B2D3C2" }} className="min-h-screen p-6">
+      {/* <h1 className="text-2xl font-bold mb-6">
         Welcome, {user.name} 👋 ({user.role})
-      </h1>
+      </h1> */}
 
       {user.role === "student" ? (
         <StudentDashboard user={user} />

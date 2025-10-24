@@ -1,44 +1,70 @@
-const mongoose = require("mongoose");
-
-const teamMemberSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-  },
-  status: {
-    type: String,
-    enum: ["Pending", "Accepted", "Rejected"],
-    default: "Pending",
-  },
-});
+import mongoose from "mongoose";
 
 const projectSchema = new mongoose.Schema(
   {
     title: {
       type: String,
       required: true,
+      trim: true,
     },
-    synopsis: {
+
+    teamMembers: [
+      {
+        name: { type: String, required: true },
+        email: { type: String, required: true },
+        role: { type: String, default: "Member" },
+      },
+    ],
+
+    course: {
+      name: { type: String, required: true },
+      code: { type: String },
+    },
+
+    instructor: {
+      name: { type: String, required: true },
+      email: { type: String },
+    },
+
+    problemStatement: {
       type: String,
       required: true,
     },
-    createdBy: {
-      type: String, // student email who created
+
+    objective: {
+      type: String,
       required: true,
     },
-    team: [teamMemberSchema], // list of students
-    mentorApproval: {
+
+    approach: {
       type: String,
-      enum: ["Approved", "Rejected", null],
-      default: null,
+      required: true,
     },
+
+    toolsUsed: {
+      type: [String], // e.g. ["React", "Node.js"]
+      default: [],
+    },
+
+    timeline: {
+      type: String, // e.g. "Planning: Oct 1–5 | Development: Oct 6–Nov 1"
+      required: true,
+    },
+
+    expectedOutcome: {
+      type: String,
+      required: true,
+    },
+
     status: {
       type: String,
-      enum: ["Draft", "Pending Mentor Approval", "Approved", "Rejected"],
+      enum: ["Draft", "In Progress", "Submitted", "Completed"],
       default: "Draft",
     },
   },
-  { timestamps: true }
+  { timestamps: true } // adds createdAt and updatedAt automatically
 );
 
-module.exports = mongoose.model("Project", projectSchema);
+const Project = mongoose.model("Project", projectSchema);
+
+export default Project;
