@@ -1,4 +1,4 @@
-🎓 Project Management System
+#🎓 Project Management System
 
 A full-stack MERN web application that allows students to create and manage academic projects while enabling teachers/instructors to review and approve them.
 
@@ -12,7 +12,7 @@ Database: MongoDB (Mongoose ODM)
 
 Authentication: Passport.js with Session & Cookies
 
-📋 Features
+#📋 Features
 🧑‍🎓 Student Features
 
 Create a new project with details like title, course, instructor, problem statement, objective, approach, tools used, timeline, and expected outcome.
@@ -27,7 +27,7 @@ View all projects assigned to them as an instructor.
 
 Review pending projects and approve or provide feedback.
 
-⚙️ Common Features
+#⚙️ Common Features
 
 Secure backend API routes.
 
@@ -35,7 +35,7 @@ Structured MongoDB schema for project management.
 
 Real-time updates (with future WebSocket support planned).
 
-🧩 Folder Structure
+#🧩 Folder Structure
 project-management/
 ├── backend/
 │   ├── config/
@@ -65,12 +65,12 @@ project-management/
 ├── package.json
 └── README.md
 
-⚙️ Installation
+#⚙️ Installation
 1️⃣ Clone the repository
 git clone https://github.com/Dhiru9262/project-management.git
 cd project-management
 
-2️⃣ Setup Backend
+#2️⃣ Setup Backend
 cd backend
 npm install
 
@@ -86,7 +86,7 @@ Run the backend server:
 
 npm run dev
 
-3️⃣ Setup Frontend
+#3️⃣ Setup Frontend
 cd ../frontend
 npm install
 npm run dev
@@ -95,13 +95,13 @@ npm run dev
 Access the app at:
 👉 http://localhost:5173
 
-🌐 API Endpoints
+#🌐 API Endpoints
 Project Routes
 Method	Endpoint	Description
 POST	/api/projects	Create new project
 GET	/api/projects/my-projects?email={email}	Get all projects of a specific student
 GET	/api/projects/teacher-projects?email={email}	Get all projects assigned to a teacher
-🧠 Example Project Schema
+#🧠 Example Project Schema
 {
   title: String,
   teamMembers: [{ name: String, email: String }],
@@ -126,6 +126,6 @@ Integrate notification system for approval updates.
 
 Role-based authentication (Student, Mentor, Admin).
 
-👨‍💻 Contributors
+#👨‍💻 Contributors
 
 Dhiraj Kumar — Developer & Designer
