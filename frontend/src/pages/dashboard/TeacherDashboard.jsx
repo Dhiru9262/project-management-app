@@ -60,7 +60,7 @@ const TeacherDashboard = ({ user }) => {
               </ul>
 
               <p className="text-gray-700 mb-1">
-                <strong>Created Time:</strong>{" "}
+                <strong>Created Time :</strong>{" "}
                 {new Date(proj.createdAt).toLocaleString()}
               </p>
             </div>
