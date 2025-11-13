@@ -5,6 +5,7 @@ const {
   mentorApproval,
   myProjects,
   getProjectsByInstructor,
+  deleteProject,
 } = require("../controllers/projectController");
 
 const router = express.Router();
@@ -12,5 +13,6 @@ const router = express.Router();
 router.post("/", createProject); // student creates
 router.get("/my-projects", myProjects); // student creates
 router.get("/teacher-projects", getProjectsByInstructor);
+router.delete("/my-projects", deleteProject);
 
 module.exports = router;

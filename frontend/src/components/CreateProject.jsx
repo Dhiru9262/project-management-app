@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios"; // Direct import
 
-const CreateProject = () => {
+const CreateProject = ({ onProjectAdded }) => {
   const [formData, setFormData] = useState({
     title: "",
     courseName: "",
@@ -64,6 +64,7 @@ const CreateProject = () => {
       );
 
       alert("✅ Project created successfully!");
+      onProjectAdded();
       console.log(res.data);
     } catch (err) {
       console.error("Error creating project:", err);

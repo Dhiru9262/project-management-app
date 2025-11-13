@@ -98,3 +98,36 @@ export const getProjectsByInstructor = async (req, res) => {
       .json({ message: "Internal Server Error", error: error.message });
   }
 };
+
+// DELETE project by ID (query param)
+export const deleteProject = async (req, res) => {
+  try {
+    const { _id } = req.query;
+
+    // 1. Validate ID
+    if (!_id) {
+      return res.status(400).json({ message: "Project ID is required" });
+    }
+
+    // 2. Find the project
+    const project = await Project.findById(_id);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    // 3. Delete project
+    await Project.findByIdAndDelete(_id);
+
+    // 4. Send response
+    res.status(200).json({
+      message: "Project deleted successfully",
+      deletedId: _id,
+    });
+  } catch (error) {
+    console.error("Error deleting project:", error.message);
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+};
