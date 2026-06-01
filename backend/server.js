@@ -46,12 +46,12 @@ app.use(
   })
 );
 
-// ✅ Passport setup
+//  Passport setup
 app.use(passport.initialize());
 app.use(passport.session());
 configurePassport(passport);
 
-// ✅ Routes
+//  Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/projects", projectRoutes);

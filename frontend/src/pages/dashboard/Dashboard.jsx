@@ -13,7 +13,7 @@ function Dashboard() {
       try {
         const res = await fetch("http://localhost:5000/api/user/me", {
           method: "GET",
-          credentials: "include", // send cookie
+          credentials: "include", 
         });
 
         if (res.status === 401) {

@@ -1,24 +1,34 @@
 import React, { useState } from "react";
-import axios from "axios"; // Direct import
+import axios from "axios";
+import { FiPlus, FiX, FiFilePlus } from "react-icons/fi";
+import { API_BASE } from "../config";
+
+const EMPTY_FORM = {
+  title: "",
+  courseName: "",
+  courseCode: "",
+  instructorName: "",
+  instructorEmail: "",
+  problemStatement: "",
+  objective: "",
+  approach: "",
+  toolsUsed: "",
+  timeline: "",
+  expectedOutcome: "",
+};
+
+// Shared input styling
+const inputClass =
+  "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition";
+const labelClass = "block text-sm font-medium text-slate-700 mb-1.5";
 
 const CreateProject = ({ onProjectAdded }) => {
-  const [formData, setFormData] = useState({
-    title: "",
-    courseName: "",
-    courseCode: "",
-    instructorName: "",
-    instructorEmail: "",
-    problemStatement: "",
-    objective: "",
-    approach: "",
-    toolsUsed: "",
-    timeline: "",
-    expectedOutcome: "",
-  });
-
+  const [formData, setFormData] = useState(EMPTY_FORM);
   const [teamMembers, setTeamMembers] = useState([
     { name: "", email: "", role: "" },
   ]);
+  const [submitting, setSubmitting] = useState(false);
+  const [status, setStatus] = useState(null); // { type: "success" | "error", text }
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,8 +44,14 @@ const CreateProject = ({ onProjectAdded }) => {
     setTeamMembers([...teamMembers, { name: "", email: "", role: "" }]);
   };
 
+  const removeMember = (index) => {
+    setTeamMembers((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
+    setStatus(null);
     try {
       const payload = {
         title: formData.title,
@@ -56,39 +72,46 @@ const CreateProject = ({ onProjectAdded }) => {
         expectedOutcome: formData.expectedOutcome,
       };
 
-      // Direct axios call
-      const res = await axios.post(
-        "http://localhost:5000/api/projects",
-        payload,
-        { withCredentials: true } // needed if your backend uses sessions/cookies
-      );
+      await axios.post(`${API_BASE}/api/projects`, payload, {
+        withCredentials: true, // needed if your backend uses sessions/cookies
+      });
 
-      alert("✅ Project created successfully!");
+      setStatus({ type: "success", text: "Project created successfully!" });
+      setFormData(EMPTY_FORM);
+      setTeamMembers([{ name: "", email: "", role: "" }]);
       onProjectAdded();
-      console.log(res.data);
     } catch (err) {
       console.error("Error creating project:", err);
-      alert("❌ Error creating project");
+      setStatus({ type: "error", text: "Something went wrong. Try again." });
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div
-      style={{ backgroundColor: "#f8f2ed" }}
-      className="max-w-4xl mx-auto p-8 rounded-2xl mt-10"
-    >
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">
-        Create New Project
-      </h1>
+    <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      {/* Header band */}
+      <div className="flex items-center gap-3 px-6 py-5 bg-gradient-to-r from-indigo-600 to-violet-600">
+        <span className="h-9 w-9 rounded-lg bg-white/20 flex items-center justify-center text-white">
+          <FiFilePlus size={18} />
+        </span>
+        <div>
+          <h2 className="text-lg font-bold text-white">Create New Project</h2>
+          <p className="text-indigo-100 text-sm">
+            Fill in the details to submit a project
+          </p>
+        </div>
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="p-6 space-y-6">
         {/* Project Title */}
         <div>
-          <label className="block font-medium">Project Title</label>
+          <label className={labelClass}>Project Title *</label>
           <input
             type="text"
             name="title"
-            className="w-full border p-2 rounded"
+            placeholder="e.g. Smart Attendance System"
+            className={inputClass}
             value={formData.title}
             onChange={handleChange}
             required
@@ -97,176 +120,207 @@ const CreateProject = ({ onProjectAdded }) => {
 
         {/* Team Members */}
         <div>
-          <label className="block font-medium mb-2">Team Members</label>
-          {teamMembers.map((member, index) => (
-            <div key={index} className="grid grid-cols-3 gap-2 mb-2">
-              <input
-                type="text"
-                name="name"
-                placeholder="Name"
-                className="border p-2 rounded"
-                value={member.name}
-                onChange={(e) => handleTeamChange(index, e)}
-                required
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                className="border p-2 rounded"
-                value={member.email}
-                onChange={(e) => handleTeamChange(index, e)}
-                required
-              />
-              <input
-                type="text"
-                name="role"
-                placeholder="Role"
-                className="border p-2 rounded"
-                value={member.role}
-                onChange={(e) => handleTeamChange(index, e)}
-              />
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addMember}
-            className="text-blue-600 hover:underline text-sm"
-          >
-            + Add another member
-          </button>
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm font-medium text-slate-700">
+              Team Members
+            </label>
+            <button
+              type="button"
+              onClick={addMember}
+              className="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-700"
+            >
+              <FiPlus size={15} /> Add member
+            </button>
+          </div>
+
+          <div className="space-y-2">
+            {teamMembers.map((member, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-center"
+              >
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                  className={inputClass}
+                  value={member.name}
+                  onChange={(e) => handleTeamChange(index, e)}
+                  required
+                />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  className={inputClass}
+                  value={member.email}
+                  onChange={(e) => handleTeamChange(index, e)}
+                  required
+                />
+                <input
+                  type="text"
+                  name="role"
+                  placeholder="Role"
+                  className={inputClass}
+                  value={member.role}
+                  onChange={(e) => handleTeamChange(index, e)}
+                />
+                <button
+                  type="button"
+                  onClick={() => removeMember(index)}
+                  disabled={teamMembers.length === 1}
+                  title="Remove member"
+                  className="h-9 w-9 flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <FiX size={16} />
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Course Info */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Course + Instructor */}
+        <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className="block font-medium">Course Name</label>
+            <label className={labelClass}>Course Name</label>
             <input
               type="text"
               name="courseName"
-              className="w-full border p-2 rounded"
+              className={inputClass}
               value={formData.courseName}
               onChange={handleChange}
             />
           </div>
           <div>
-            <label className="block font-medium">Course Code</label>
+            <label className={labelClass}>Course Code</label>
             <input
               type="text"
               name="courseCode"
-              className="w-full border p-2 rounded"
+              className={inputClass}
               value={formData.courseCode}
               onChange={handleChange}
             />
           </div>
-        </div>
-
-        {/* Instructor Info */}
-        <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block font-medium">Instructor Name</label>
+            <label className={labelClass}>Instructor Name</label>
             <input
               type="text"
               name="instructorName"
-              className="w-full border p-2 rounded"
+              className={inputClass}
               value={formData.instructorName}
               onChange={handleChange}
             />
           </div>
           <div>
-            <label className="block font-medium">Instructor Email</label>
+            <label className={labelClass}>Instructor Email</label>
             <input
               type="email"
               name="instructorEmail"
-              className="w-full border p-2 rounded"
+              className={inputClass}
               value={formData.instructorEmail}
               onChange={handleChange}
             />
           </div>
         </div>
 
-        {/* Problem Statement */}
-        <div>
-          <label className="block font-medium">Problem Statement</label>
-          <textarea
-            name="problemStatement"
-            className="w-full border p-2 rounded"
-            rows="2"
-            value={formData.problemStatement}
-            onChange={handleChange}
-          />
+        {/* Long-form fields */}
+        <div className="grid gap-4">
+          <div>
+            <label className={labelClass}>Problem Statement</label>
+            <textarea
+              name="problemStatement"
+              className={inputClass}
+              rows="2"
+              value={formData.problemStatement}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Objective</label>
+            <textarea
+              name="objective"
+              className={inputClass}
+              rows="2"
+              value={formData.objective}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Approach</label>
+            <textarea
+              name="approach"
+              className={inputClass}
+              rows="2"
+              value={formData.approach}
+              onChange={handleChange}
+            />
+          </div>
         </div>
 
-        {/* Objective */}
-        <div>
-          <label className="block font-medium">Objective</label>
-          <textarea
-            name="objective"
-            className="w-full border p-2 rounded"
-            rows="2"
-            value={formData.objective}
-            onChange={handleChange}
-          />
+        {/* Tools + Timeline */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>Tools Used</label>
+            <input
+              type="text"
+              name="toolsUsed"
+              placeholder="React, Node.js, MongoDB"
+              className={inputClass}
+              value={formData.toolsUsed}
+              onChange={handleChange}
+            />
+            <p className="text-xs text-slate-400 mt-1">Separate with commas</p>
+          </div>
+          <div>
+            <label className={labelClass}>Timeline</label>
+            <input
+              type="text"
+              name="timeline"
+              placeholder="e.g. 6 weeks"
+              className={inputClass}
+              value={formData.timeline}
+              onChange={handleChange}
+            />
+          </div>
         </div>
 
-        {/* Approach */}
         <div>
-          <label className="block font-medium">Approach</label>
-          <textarea
-            name="approach"
-            className="w-full border p-2 rounded"
-            rows="2"
-            value={formData.approach}
-            onChange={handleChange}
-          />
-        </div>
-
-        {/* Tools Used */}
-        <div>
-          <label className="block font-medium">
-            Tools Used (comma-separated)
-          </label>
-          <input
-            type="text"
-            name="toolsUsed"
-            className="w-full border p-2 rounded"
-            value={formData.toolsUsed}
-            onChange={handleChange}
-          />
-        </div>
-
-        {/* Timeline */}
-        <div>
-          <label className="block font-medium">Timeline</label>
-          <input
-            type="text"
-            name="timeline"
-            className="w-full border p-2 rounded"
-            value={formData.timeline}
-            onChange={handleChange}
-          />
-        </div>
-
-        {/* Expected Outcome */}
-        <div>
-          <label className="block font-medium">Expected Outcome</label>
+          <label className={labelClass}>Expected Outcome</label>
           <textarea
             name="expectedOutcome"
-            className="w-full border p-2 rounded"
+            className={inputClass}
             rows="2"
             value={formData.expectedOutcome}
             onChange={handleChange}
           />
         </div>
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Create Project
-        </button>
+        {/* Submit */}
+        <div className="flex items-center gap-4 pt-2">
+          <button
+            type="submit"
+            disabled={submitting}
+            className="inline-flex items-center gap-2 bg-indigo-600 text-white font-medium px-5 py-2.5 rounded-lg hover:bg-indigo-700 transition shadow-sm shadow-indigo-600/30 disabled:opacity-60"
+          >
+            {submitting && (
+              <span className="h-4 w-4 rounded-full border-2 border-white/50 border-t-white animate-spin" />
+            )}
+            {submitting ? "Creating…" : "Create Project"}
+          </button>
+
+          {status && (
+            <span
+              className={`text-sm font-medium ${
+                status.type === "success" ? "text-emerald-600" : "text-rose-600"
+              }`}
+            >
+              {status.type === "success" ? "✅ " : "❌ "}
+              {status.text}
+            </span>
+          )}
+        </div>
       </form>
-    </div>
+    </section>
   );
 };
 
