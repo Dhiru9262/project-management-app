@@ -26,7 +26,10 @@ app.use(cookieParser());
 // ✅ CORS setup for cookies
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "https://your-app.vercel.app",
+      "http://localhost:5173"
+    ],
     credentials: true,
   })
 );
