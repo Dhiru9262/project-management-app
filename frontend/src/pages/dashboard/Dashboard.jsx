@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import StudentDashboard from "./StudentDashboard";
 import TeacherDashboard from "./TeacherDashboard";
+import { API_BASE } from "../../config";
 
 function Dashboard() {
   const [user, setUser] = useState(null);
@@ -11,7 +12,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/user/me", {
+        const res = await fetch(`${API_BASE}/api/user/me`, {
           method: "GET",
           credentials: "include", 
         });

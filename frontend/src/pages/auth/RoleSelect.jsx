@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
+import { API_BASE } from "../../config";
 
 export default function RoleSelect() {
   const { user, setUser } = useAuth(); // user info from context
@@ -10,7 +11,7 @@ export default function RoleSelect() {
   const handleRole = async (role) => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/set-role",
+        `${API_BASE}/api/auth/set-role`,
         { role },
         {
           headers: { Authorization: `Bearer ${user.tempToken}` }, // temporary token without role
