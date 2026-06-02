@@ -34,10 +34,22 @@ router.get(
 // Callback route
 router.get(
   "/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/api/auth/google/failure",
-    session: false,
-  }),
+  (req, res, next) => {
+    passport.authenticate("google", { session: false }, (err, user, info) => {
+      if (err) {
+        console.error("❌ Google callback error:", err);
+        return res
+          .status(500)
+          .json({ success: false, message: "OAuth error", error: String(err) });
+      }
+      if (!user) {
+        console.error("❌ Google callback - no user. info:", info);
+        return res.redirect("/api/auth/google/failure");
+      }
+      req.user = user;
+      next();
+    })(req, res, next);
+  },
   (req, res) => {
     const user = req.user;
     const payload = {
@@ -53,10 +65,12 @@ router.get(
     });
 
     // ✅ Set JWT in HttpOnly cookie
+    const isProd = process.env.NODE_ENV === "production";
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: isProd,
+      // Cross-site (Vercel -> Render) needs SameSite=None + Secure
+      sameSite: isProd ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 

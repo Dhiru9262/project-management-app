@@ -19,17 +19,23 @@ connectDB();
 
 const app = express();
 
+const isProd = process.env.NODE_ENV === "production";
+
+// Trust Render/Vercel proxy so secure cookies work behind HTTPS termination
+app.set("trust proxy", 1);
+
 // ✅ Middleware
 app.use(express.json());
 app.use(cookieParser());
 
-// ✅ CORS setup for cookies
+// ✅ CORS setup for cookies (cross-site: Vercel frontend -> Render backend)
+const allowedOrigins = [
+  process.env.FRONTEND_URL || "http://localhost:5173",
+  "http://localhost:5173",
+];
 app.use(
   cors({
-    origin: [
-      "https://your-app.vercel.app",
-      "http://localhost:5173"
-    ],
+    origin: allowedOrigins,
     credentials: true,
   })
 );
@@ -42,8 +48,9 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false, // change to true in production with HTTPS
-      sameSite: "lax",
+      // Cross-site cookies require SameSite=None + Secure in production
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
       maxAge: 24 * 60 * 60 * 1000,
     },
   })
